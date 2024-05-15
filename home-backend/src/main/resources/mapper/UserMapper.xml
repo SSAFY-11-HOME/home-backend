@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="com.ssafy.homebackend.mapper.UserMapper">
+	<resultMap id="User" type="com.ssafy.homebackend.vo.User">
+		<id column="id" property="id"/>
+	    <result column="pw" property="pw"/>
+	    <result column="name" property="name"/>
+	    <result column="email" property="email"/>
+	    <result column="register_date" property="registerDate" jdbcType="TIMESTAMP" javaType="java.lang.String"/>
+	    <result column="is_broker" property="isBroker" jdbcType="TINYINT" javaType="boolean"/>
+	    <result column="is_admin" property="isAdmin" jdbcType="TINYINT" javaType="boolean"/>
+	</resultMap>
+
+	<select id="selectAllUser" resultMap = "User">
+		select * from user
+	</select>
+</mapper>
+
+
+

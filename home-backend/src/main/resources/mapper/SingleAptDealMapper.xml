@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="com.ssafy.homebackend.mapper.SingleAptDealMapper">
+	<select id="selectSingleAptDeals" parameterType="String" resultType = "SingleAptDeal">
+		select
+		concat(substring(hd.dealYear, 3), '.',lpad(hd.dealMonth, 2, '0'), '.', lpad(hd.dealDay, 2, '0')) as dealDate,
+		hd.dealAmount,
+		hd.area,
+		round(area * 0.3025, 2) as parea,
+		hd.floor
+		from houseInfo hi
+		join dongcode dc
+		on  hi.dongCode = dc.dongcode
+		join housedeal hd
+		on hi.aptCode = hd.aptCode
+		where hi.aptCode = #{aptCode};
+	</select>
+</mapper>
+
+
+

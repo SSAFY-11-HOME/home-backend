@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="com.ssafy.homebackend.mapper.AreaAptDealMapper">
+	<select id="selectAptAreaDeal" parameterType="map" resultType = "AreaDeal">
+SELECT 
+    sub_query.aptCode as id, 
+    sub_query.apartmentName as name, 
+    sub_query.floor, 
+    sub_query.area, 
+    sub_query.parea, 
+    sub_query.dealAmount, 
+    sub_query.dealDate, 
+    sub_query.lat, 
+    sub_query.lng
+FROM (
+    SELECT 
+        hi.aptCode, 
+        hi.apartmentName, 
+        hd.floor, 
+        hd.area, 
+        round(hd.area * 0.3025, 2) as parea,
+        hd.dealAmount, 
+        concat(substring(hd.dealYear, 3), '.',lpad(hd.dealMonth, 2, '0'), '.', lpad(hd.dealDay, 2, '0')) as dealDate,
+        hi.lat, 
+        hi.lng,
+        ROW_NUMBER() OVER (PARTITION BY hi.apartmentName ORDER BY hd.dealYear DESC, hd.dealMonth DESC, hd.dealDay DESC) AS row_num
+    FROM 
+        houseinfo hi
+    JOIN 
+        housedeal hd ON hi.aptCode = hd.aptCode
+    WHERE 
+        hi.lng BETWEEN (#{lng} - 0.01) AND (#{lng} + 0.01) 
+        AND hi.lat BETWEEN (#{lat} - 0.001) AND (#{lat} + 0.001)
+	) AS sub_query
+WHERE 
+    sub_query.row_num = 1;
+	</select>
+</mapper>
+
+
+
