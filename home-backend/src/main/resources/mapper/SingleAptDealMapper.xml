@@ -11,7 +11,7 @@
 		hd.area,
 		round(area * 0.3025, 2) as parea,
 		hd.floor
-		from houseInfo hi
+		from houseinfo hi
 		join dongcode dc
 		on  hi.dongCode = dc.dongcode
 		join housedeal hd

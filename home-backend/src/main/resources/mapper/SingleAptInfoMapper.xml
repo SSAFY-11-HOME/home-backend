@@ -11,12 +11,12 @@
 		concat(dc.sidoName, ' ', dc.gugunName) as base, 
 		concat(dc.dongName, ' ', hi.jibun) as jibun, 
 		concat(hi.roadName, ' ', hi.roadNameBonbun%100000, '-', hi.roadNameBubun%100000) as road
-		from houseInfo hi
+		from houseinfo hi
 		join dongcode dc
 		on  hi.dongCode = dc.dongcode
 		join housedeal hd
 		on hi.aptCode = hd.aptCode
-		where hi.aptCode = 26110000000053;
+		where hi.aptCode = #{aptCode};
 	</select>
 </mapper>
 
