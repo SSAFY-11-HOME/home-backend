@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.homebackend.mapper.SearchHouseMapper;
-import com.ssafy.homebackend.vo.SearchIdTypeName;
+import com.ssafy.homebackend.vo.SearchIdName;
 
 @Service
 public class SearchHouseServiceImpl implements SearchHouseService {
@@ -14,33 +14,41 @@ public class SearchHouseServiceImpl implements SearchHouseService {
 	SearchHouseMapper mapper;
 
 	@Override
-	public ArrayList<SearchIdTypeName> searchAreaList(String searchWord) {
-//		ArrayList<SearchIdTypeName> arealist = mapper.searchAreaList(searchWord);
-//		for (SearchIdTypeName rec : arealist) {
-//			;
-//		}
-		return null;
+	public ArrayList<SearchIdName> searchAreaList(String searchWord) {
+		ArrayList<SearchIdName> arealist = mapper.searchAreaList(searchWord);
+		return arealist;
 	}
 
 	@Override
-	public ArrayList<SearchIdTypeName> searchAptList(String searchWord) {
-		ArrayList<SearchIdTypeName> aptlist = mapper.searchAptList(searchWord);
-		for (SearchIdTypeName rec : aptlist) {
-			rec.setType("apartment");
-		}
+	public ArrayList<SearchIdName> searchAptList(String searchWord) {
+		ArrayList<SearchIdName> aptlist = mapper.searchAptList(searchWord);
 		return aptlist;
 	}
 
 	@Override
-	public ArrayList<SearchIdTypeName> searchOfiList(String searchWord) {
+	public ArrayList<SearchIdName> searchOfiList(String searchWord) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ArrayList<SearchIdTypeName> searchVilList(String searchWord) {
-		// TODO Auto-generated method stub
+	public ArrayList<SearchIdName> searchVilList(String searchWord) {
+		return null;
+	}
+//////////////////////////////////////////////////////////////////////////////
+	@Override
+	public ArrayList<SearchIdName> getDongAptList(String dongcode) {
+		ArrayList<SearchIdName> aptlist = mapper.getDongAptList(dongcode);
+		return aptlist;
+	}
+
+	@Override
+	public ArrayList<SearchIdName> getDongOfiList(String dongcode) {
 		return null;
 	}
 
+	@Override
+	public ArrayList<SearchIdName> getDongVilList(String dongcode) {
+		return null;
+	}
 }
