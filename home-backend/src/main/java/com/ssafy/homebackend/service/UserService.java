@@ -8,4 +8,6 @@ public interface UserService {
 	public ArrayList<User> selectAllUser();
 
 	public int register(User user);
+
+	public int deleteAccount(String id);
 }

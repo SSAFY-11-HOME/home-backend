@@ -11,4 +11,6 @@ public interface UserMapper {
 	ArrayList<User> selectAllUser();
 
 	int register(User user);
+
+	int deleteAccount(String id);
 }

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,15 +31,35 @@ public class UserController {
 	UserService userService;
 
 	@Operation(summary = "회원가입", description = "id, pw, name, email, isBroker(중개업자인가요? 체크박스 등)를 받아 유저 정보 생성. 가입시간 자동 입력. admin은 관리자 페이지에서 admin으로 지정해주는 식으로 처리")
-	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "회원정보 추가 성공") })
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "201", description = "회원정보 추가 성공"),
+			@ApiResponse(responseCode = "400", description = "회원 가입 시 필요한 정보 누락") 
+			})
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody User user){
-		if(user.getId().equals("") || user.getPw().equals("") || user.getName().equals("") || user.getEmail().equals("")) {
+	public ResponseEntity<?> register(@RequestBody User user) {
+		if (user.getId().equals("") || user.getPw().equals("") || user.getName().equals("")
+				|| user.getEmail().equals("")) {
 			return new ResponseEntity<String>("모든 필드를 입력해 주세요.", HttpStatus.BAD_REQUEST);
 		}
 		int resultCode = userService.register(user);
-		System.out.println("result Code = "+resultCode);
+		System.out.println("result Code = " + resultCode);
 		return new ResponseEntity<String>("회원가입 성공", HttpStatus.CREATED);
+	}
+
+	@Operation(summary = "회원탈퇴", description = "id에 해당하는 계정 삭제")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "회원탈퇴 성공"),
+			@ApiResponse(responseCode = "400", description = "회원탈퇴 실패")
+			})
+	@DeleteMapping("/delete")
+	public ResponseEntity<?> deleteAccount(@RequestBody String id) {
+		int resultCode = userService.deleteAccount(id);
+		System.out.println("result Code = " + resultCode);
+		if (resultCode == 1) {
+			return new ResponseEntity<String>("회원탈퇴 성공", HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>("회원탈퇴 실패", HttpStatus.BAD_REQUEST);
+		}
 	}
 
 //	@Operation(summary = "로그인", description = "아이디와 비밀번호를 이용하여 로그인 처리.")

@@ -22,4 +22,9 @@ public class UserServiceImpl implements UserService{
 	public int register(User user) {
 		return mapper.register(user);
 	}
+
+	@Override
+	public int deleteAccount(String id) {
+		return mapper.deleteAccount(id);
+	}
 }

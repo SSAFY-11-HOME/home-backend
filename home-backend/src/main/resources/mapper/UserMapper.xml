@@ -22,6 +22,11 @@
 		insert into user (id, pw, name, email, is_broker, is_admin) 
 		values (#{id}, #{pw}, #{name}, #{email}, #{isBroker}, 0)
 	</insert>
+	
+	<delete id="deleteAccount" parameterType="String">
+		delete from user 
+		where id = #{id}	
+	</delete>
 </mapper>
 
 
