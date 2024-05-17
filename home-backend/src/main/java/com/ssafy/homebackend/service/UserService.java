@@ -6,4 +6,6 @@ import com.ssafy.homebackend.vo.User;
 
 public interface UserService {
 	public ArrayList<User> selectAllUser();
+
+	public int register(User user);
 }

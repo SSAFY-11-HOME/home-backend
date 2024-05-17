@@ -9,4 +9,6 @@ import com.ssafy.homebackend.vo.User;
 @Mapper
 public interface UserMapper {
 	ArrayList<User> selectAllUser();
+
+	int register(User user);
 }

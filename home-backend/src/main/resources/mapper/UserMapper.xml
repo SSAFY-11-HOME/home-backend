@@ -17,6 +17,11 @@
 	<select id="selectAllUser" resultMap = "User">
 		select * from user
 	</select>
+	
+	<insert id="register" parameterType="User">
+		insert into user (id, pw, name, email, is_broker, is_admin) 
+		values (#{id}, #{pw}, #{name}, #{email}, 0, 0)
+	</insert>
 </mapper>
 
 

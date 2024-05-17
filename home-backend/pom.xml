@@ -69,7 +69,17 @@
 		    <version>2.5.0</version>
 		</dependency>
 		
+<!--		 spring security 
+		 https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security 
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-security</artifactId>
+		    <version>3.2.5</version>
+		</dependency>-->
 		
+		<!-- jackson data bind -->
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+
 	</dependencies>
 
 	<build>

@@ -12,11 +12,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class User {
-	String id;
-	String pw;
-	String name;
-	String email;
-	String registerDate;
-	Boolean isBroker;
-	Boolean isAdmin;
+	private String id;
+	private String pw;
+	private String name;
+	private String email;
+	private String registerDate;
+	private Boolean isBroker;
+	private Boolean isAdmin;
 }
