@@ -23,12 +23,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/user")
 @CrossOrigin("*")
-@Tag(name = "유저 컨트롤러", description = "로그인, 로그아웃, 토큰 처리 등 회원 인증 관련 요청 처리 클래스")
+@Tag(name = "유저 컨트롤러", description = "회원정보 관리(가입, 수정, 탈퇴), 로그인, 로그아웃, 토큰 처리 등 회원 인증 관련 요청 처리 클래스")
 public class UserController {
 	@Autowired
 	UserService userService;
 
-	@Operation(summary = "회원가입")
+	@Operation(summary = "회원가입", description = "id, pw, name, email, isBroker(중개업자인가요? 체크박스 등)를 받아 유저 정보 생성. 가입시간 자동 입력. admin은 관리자 페이지에서 admin으로 지정해주는 식으로 처리")
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "회원정보 추가 성공") })
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody User user){

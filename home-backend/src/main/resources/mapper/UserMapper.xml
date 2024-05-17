@@ -20,7 +20,7 @@
 	
 	<insert id="register" parameterType="User">
 		insert into user (id, pw, name, email, is_broker, is_admin) 
-		values (#{id}, #{pw}, #{name}, #{email}, 0, 0)
+		values (#{id}, #{pw}, #{name}, #{email}, #{isBroker}, 0)
 	</insert>
 </mapper>
 
