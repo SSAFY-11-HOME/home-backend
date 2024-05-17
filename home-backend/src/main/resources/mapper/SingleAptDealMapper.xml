@@ -16,7 +16,8 @@
 		on  hi.dongCode = dc.dongcode
 		join housedeal hd
 		on hi.aptCode = hd.aptCode
-		where hi.aptCode = #{aptCode};
+		where hi.aptCode = #{aptCode}
+		order by dealDate desc;
 	</select>
 </mapper>
 
