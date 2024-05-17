@@ -35,7 +35,7 @@ public class UserController {
 			@ApiResponse(responseCode = "201", description = "회원정보 추가 성공"),
 			@ApiResponse(responseCode = "400", description = "회원 가입 시 필요한 정보 누락") 
 			})
-	@PostMapping("/register")
+	@PostMapping
 	public ResponseEntity<String> register(@RequestBody User user) {
 		if (user.getId().equals("") || user.getPw().equals("") || user.getName().equals("")
 				|| user.getEmail().equals("")) {
@@ -51,7 +51,7 @@ public class UserController {
 			@ApiResponse(responseCode = "200", description = "회원탈퇴 성공"),
 			@ApiResponse(responseCode = "400", description = "회원탈퇴 실패")
 			})
-	@DeleteMapping("/delete")
+	@DeleteMapping
 	public ResponseEntity<String> deleteAccount(@RequestBody String id) {
 		int resultCode = userService.deleteAccount(id);
 		System.out.println("result Code = " + resultCode);
@@ -66,7 +66,7 @@ public class UserController {
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "회원정보 수정 성공"), 
 			})
-	@PutMapping("/modify")
+	@PutMapping
 	public ResponseEntity<String> modifyAccount(@RequestBody User user) {
 		if (user.getId().equals("") || user.getPw().equals("") || user.getName().equals("")
 				|| user.getEmail().equals("")) {
