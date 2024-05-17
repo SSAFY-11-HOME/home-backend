@@ -10,4 +10,6 @@ public interface UserService {
 	public int register(User user);
 
 	public int deleteAccount(String id);
+
+	public int modifyAccount(User user);
 }

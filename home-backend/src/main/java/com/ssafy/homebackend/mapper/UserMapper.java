@@ -13,4 +13,6 @@ public interface UserMapper {
 	int register(User user);
 
 	int deleteAccount(String id);
+
+	int modifyAccount(User user);
 }

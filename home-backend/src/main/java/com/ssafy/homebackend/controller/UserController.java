@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +36,7 @@ public class UserController {
 			@ApiResponse(responseCode = "400", description = "회원 가입 시 필요한 정보 누락") 
 			})
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody User user) {
+	public ResponseEntity<String> register(@RequestBody User user) {
 		if (user.getId().equals("") || user.getPw().equals("") || user.getName().equals("")
 				|| user.getEmail().equals("")) {
 			return new ResponseEntity<String>("모든 필드를 입력해 주세요.", HttpStatus.BAD_REQUEST);
@@ -52,7 +52,7 @@ public class UserController {
 			@ApiResponse(responseCode = "400", description = "회원탈퇴 실패")
 			})
 	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteAccount(@RequestBody String id) {
+	public ResponseEntity<String> deleteAccount(@RequestBody String id) {
 		int resultCode = userService.deleteAccount(id);
 		System.out.println("result Code = " + resultCode);
 		if (resultCode == 1) {
@@ -60,6 +60,21 @@ public class UserController {
 		} else {
 			return new ResponseEntity<String>("회원탈퇴 실패", HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	@Operation(summary = "회원정보 수정", description = "파라미터 4개(id, pw, name, email). User.id에 해당하는 회원정보 수정. pw, name, email만 수정 가능")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "회원정보 수정 성공"), 
+			})
+	@PutMapping("/modify")
+	public ResponseEntity<String> modifyAccount(@RequestBody User user) {
+		if (user.getId().equals("") || user.getPw().equals("") || user.getName().equals("")
+				|| user.getEmail().equals("")) {
+			return new ResponseEntity<String>("모든 필드를 입력해 주세요.", HttpStatus.BAD_REQUEST);
+		}
+		int resultCode = userService.modifyAccount(user);
+		System.out.println("result Code = " + resultCode);
+		return new ResponseEntity<String>("회원정보 수정 성공", HttpStatus.OK);
 	}
 
 //	@Operation(summary = "로그인", description = "아이디와 비밀번호를 이용하여 로그인 처리.")
