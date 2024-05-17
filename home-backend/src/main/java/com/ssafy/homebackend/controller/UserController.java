@@ -32,9 +32,12 @@ public class UserController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "회원정보 추가 성공") })
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody User user){
+		if(user.getId().equals("") || user.getPw().equals("") || user.getName().equals("") || user.getEmail().equals("")) {
+			return new ResponseEntity<String>("모든 필드를 입력해 주세요.", HttpStatus.BAD_REQUEST);
+		}
 		int resultCode = userService.register(user);
 		System.out.println("result Code = "+resultCode);
-		return new ResponseEntity<Void>(HttpStatus.CREATED);
+		return new ResponseEntity<String>("회원가입 성공", HttpStatus.CREATED);
 	}
 
 //	@Operation(summary = "로그인", description = "아이디와 비밀번호를 이용하여 로그인 처리.")
