@@ -32,7 +32,7 @@ public class SearchController {
 	@Autowired
 	SearchHouseService searchHouseService;
 
-	@Operation(summary = "검색어와 연관된 지역, 주택 리스트 반환. id는 dongCode, aptCode, ofiCode, vilCode")
+	@Operation(summary = "지역/주택 검색", description = "검색어와 연관된 지역, 주택 리스트 반환. 리스트key는 searchArea/searchApt/searchOfi/searchVil. id는 dongCode/aptCode/ofiCode/vilCode")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "정상"), })
 	@GetMapping("/{searchWord}")
 	public ResponseEntity<HashMap<String, ArrayList<SearchIdName>>> search(
@@ -53,11 +53,11 @@ public class SearchController {
 		return ResponseEntity.ok(map);
 	}
 
-	@Operation(summary = "동코드 일치하는 주택들 리스트 반환.")
+	@Operation(summary = "지역 검색", description = "동코드 일치하는 주택들 리스트 반환. 리스트key는 dongAptList/dongOfiList/dongVilList")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "정상"), })
 	@GetMapping("/dong/{dongcode}")
 	public ResponseEntity<HashMap<String, ArrayList<SearchIdName>>> selectAreaAptDeal(
-			@Parameter(description = "검색어") @PathVariable String dongcode) {
+			@Parameter(description = "동코드") @PathVariable String dongcode) {
 		HashMap<String, ArrayList<SearchIdName>> map = new HashMap<>();
 		
 		ArrayList<SearchIdName> dongAptList = searchHouseService.getDongAptList(dongcode);

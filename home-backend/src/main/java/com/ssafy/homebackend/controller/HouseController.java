@@ -33,7 +33,7 @@ public class HouseController {
 	@Autowired
 	SingleAptDealInfoService singleAptDealInfoService;
 
-	@Operation(summary = "좌표 기준 주변 주택들의 최근 거래 정보 리스트 반환")
+	@Operation(summary = "주변 주택 정보 + 가장 최근 거래 내역", description = "좌표 기준 주변 주택들 + 최근 거래 정보 반환.")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "정상"), })
 	@GetMapping("/area")
 	public ResponseEntity<ArrayList<AreaDeal>> selectAreaAptDeal(
@@ -46,7 +46,7 @@ public class HouseController {
 		return ResponseEntity.ok(list);
 	}
 
-	@Operation(summary = "마커 클릭 시 해당 아파트의 거래 정보 리스트 반환")
+	@Operation(summary = "해당 주택 거래 내역 상세 정보", description = "해당 주택의 거래 정보 리스트 반환.")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "정상"), })
 	@GetMapping("/apt")
 	public ResponseEntity<SingleAptInfo> selectSingleAptInfo(
