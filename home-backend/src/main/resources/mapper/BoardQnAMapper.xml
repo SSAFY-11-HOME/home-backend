@@ -8,6 +8,24 @@
 		insert into qboard (id, title, contents) 
 		values (#{id}, #{title}, #{contents})	
 	</insert>
+	
+	<select id="selectOne" parameterType="Integer" resultType="com.ssafy.homebackend.vo.Board">
+		select *
+		from qboard 
+		where articleId = #{articleId}
+	</select>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from qboard 
+		where articleId = #{articleId}
+	</delete>
+	
+	<update id="update" parameterType="com.ssafy.homebackend.vo.Board">
+		update qboard set
+		title = #{title},
+		contents = #{contents}
+		where articleId = #{articleId}
+	</update>
 </mapper>
 
 

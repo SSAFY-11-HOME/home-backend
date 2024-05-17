@@ -7,4 +7,10 @@ import com.ssafy.homebackend.vo.Board;
 @Mapper
 public interface BoardQnAMapper {
 	int insert(Board board);
+
+	Board selectOne(int articleId);
+
+	int delete(int articleId);
+
+	int update(Board board);
 }

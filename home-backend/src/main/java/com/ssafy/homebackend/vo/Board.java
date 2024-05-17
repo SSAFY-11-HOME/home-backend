@@ -12,7 +12,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class Board {
-	private String articleId;
+	private int articleId;
 	private String id;
 	private String date;
 	private String title;

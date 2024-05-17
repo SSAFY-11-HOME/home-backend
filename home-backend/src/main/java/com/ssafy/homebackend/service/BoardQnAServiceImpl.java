@@ -15,4 +15,19 @@ public class BoardQnAServiceImpl implements BoardQnAService {
 	public int insert(Board board) {
 		return mapper.insert(board);
 	}
+
+	@Override
+	public Board selectOne(int articleId) {
+		return mapper.selectOne(articleId);
+	}
+
+	@Override
+	public int delete(int articleId) {
+		return mapper.delete(articleId);
+	}
+
+	@Override
+	public int update(Board board) {
+		return mapper.update(board);
+	}
 }

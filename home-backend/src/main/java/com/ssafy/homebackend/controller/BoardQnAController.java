@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,10 +17,13 @@ import com.ssafy.homebackend.service.BoardQnAService;
 import com.ssafy.homebackend.vo.Board;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/qboard")
 @CrossOrigin("*")
@@ -25,7 +31,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class BoardQnAController {
 	@Autowired
 	BoardQnAService boardQnAService;
-	
 	
 	@Operation(summary = "QnA 게시판 글 쓰기", description = "로그인 상태에서만 글 쓰기 가능. id, title, contents 받음.")
 	@ApiResponses(value = { 
@@ -41,4 +46,61 @@ public class BoardQnAController {
 		System.out.println("result Code = " + resultCode);
 		return new ResponseEntity<String>("QnA 작성 성공", HttpStatus.CREATED);
 	}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	@Operation(summary = "QnA 게시판 글 읽기", description = "권한 상관 없이 글 읽기 가능. 글 번호 받음.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "QnA 글 읽기 성공")
+			})
+	@GetMapping("/{articleId}")
+	public ResponseEntity<Board> selectOne(@Parameter(description = "글 번호") @PathVariable int articleId) {
+		
+//		log.info("게시판 글 읽기!");
+		Board board = boardQnAService.selectOne(articleId);
+		return new ResponseEntity<Board>(board, HttpStatus.OK);
+	}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	@Operation(summary = "QnA 게시판 글 삭제", description = "자기 글만 삭제 가능. id, articleId 받음")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "QnA 글 삭제 성공"),
+			@ApiResponse(responseCode = "400", description = "QnA 글 삭제 실패")
+			})
+	@DeleteMapping
+	public ResponseEntity<String> delete(@RequestBody Board board) {
+		String id = board.getId();
+		int articleId = board.getArticleId();
+		
+		Board temp = boardQnAService.selectOne(articleId);
+		if(temp.getId().equals(id)==false) {
+			return new ResponseEntity<String>("자신의 글만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
+		}
+		
+		int result = boardQnAService.delete(articleId);
+		return new ResponseEntity<String>("글 삭제 성공", HttpStatus.OK);
+	}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	@Operation(summary = "QnA 게시판 글 수정", description = "자기 글만 수정 가능. articleId, id, title, contents 받음")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "QnA 글 수정 성공"),
+			@ApiResponse(responseCode = "400", description = "QnA 글 수정 실패")
+			})
+	@PutMapping
+	public ResponseEntity<String> update(@RequestBody Board board) {
+		if (board.getTitle().equals("") || board.getContents().equals("")) {
+			return new ResponseEntity<String>("모든 필드를 입력해 주세요.", HttpStatus.BAD_REQUEST);
+		}
+		
+		String id = board.getId();
+		int articleId = board.getArticleId();
+		
+		
+		Board temp = boardQnAService.selectOne(articleId);
+		if(temp.getId().equals(id)==false) {
+			return new ResponseEntity<String>("자신의 글만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST);
+		}
+		
+		int result = boardQnAService.update(board);
+		return new ResponseEntity<String>("글 수정 성공", HttpStatus.OK);
+	}
+	
+
 }
