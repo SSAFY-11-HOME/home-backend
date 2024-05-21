@@ -53,13 +53,14 @@ public class UserController {
 		System.out.println("result Code = " + resultCode);
 		return new ResponseEntity<String>("회원가입 성공", HttpStatus.CREATED);
 	}
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	@Operation(summary = "회원탈퇴", description = "id에 해당하는 계정 삭제")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "회원탈퇴 성공"),
 			@ApiResponse(responseCode = "400", description = "회원탈퇴 실패"),
 			@ApiResponse(responseCode = "500", description = "서버 에러") })
 	@DeleteMapping
-	public ResponseEntity<String> deleteAccount(@RequestBody String id) {
+	public ResponseEntity<String> deleteAccount(@RequestBody User user) {
+		String id = user.getId();
 		int resultCode = userService.deleteAccount(id);
 		System.out.println("result Code = " + resultCode);
 		if (resultCode == 1) {
