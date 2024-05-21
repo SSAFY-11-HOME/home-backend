@@ -12,4 +12,10 @@ public interface UserService {
 	public int deleteAccount(String id);
 
 	public int modifyAccount(User user);
+
+	public User login(User userInput);
+
+	public void saveRefreshToken(String id, String refreshToken);
+
+	public int deleteRefreshToken(String userId);
 }
