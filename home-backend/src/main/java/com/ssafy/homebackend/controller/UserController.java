@@ -149,7 +149,7 @@ public class UserController {
 	@Operation(summary = "Access Token 만료 시 재발급", description = "header에 refreshToken을 담아 전달. refreshToken이 만료되지 않았다면 access-token을 재발급 받는다.")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "201", description = "refreshToken 유효. accessToken 재발급 성공"),
-			@ApiResponse(responseCode = "400", description = "header로 전달받은 refreshToken과 db에서 refreshToken에서 추출한 id로 조회한 refreshToken이 다름. 로그인 상태 해제하기. 로그인 페이지로 이동시키기."),
+			@ApiResponse(responseCode = "400", description = "header로 전달받은 refreshToken과 refreshToken에서 추출한 id로 db에 조회한 refreshToken이 다름. 로그인 상태 해제하기. 로그인 페이지로 이동시키기."),
 			@ApiResponse(responseCode = "401", description = "refreshToken도 만료되어 accessToken 재발급 실패. 로그인 상태 해제하기. 로그인 페이지로 이동시키기.")
 			}
 	)
@@ -169,7 +169,7 @@ public class UserController {
 				resultMap.put("access-token", accessToken);
 				status = HttpStatus.CREATED;
 			} else {
-				System.out.println("같이 전달받은 id와 refreshToken이 저장된 record의 id가 다름");
+				System.out.println("전달받은 refreshToken과 조회한 refreshToken이 다름.");
 				status = HttpStatus.BAD_REQUEST;
 			}
 		} else {
