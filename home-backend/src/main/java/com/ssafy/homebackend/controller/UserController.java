@@ -146,15 +146,15 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	@Operation(summary = "Access Token 만료 시 재발급", description = "body에 id, header에 refreshToken을 담아 전달. refreshToken이 만료되지 않았다면 access-token을 재발급 받는다.")
+	@Operation(summary = "Access Token 만료 시 재발급", description = "header에 refreshToken을 담아 전달. refreshToken이 만료되지 않았다면 access-token을 재발급 받는다.")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "201", description = "refreshToken 유효. accessToken 재발급 성공"),
-			@ApiResponse(responseCode = "400", description = "header로 전달받은 refreshToken과 id로 db에서 조회한 refreshToken이 다름. 로그인 상태 해제하기. 로그인 페이지로 이동시키기."),
+			@ApiResponse(responseCode = "400", description = "header로 전달받은 refreshToken과 db에서 refreshToken에서 추출한 id로 조회한 refreshToken이 다름. 로그인 상태 해제하기. 로그인 페이지로 이동시키기."),
 			@ApiResponse(responseCode = "401", description = "refreshToken도 만료되어 accessToken 재발급 실패. 로그인 상태 해제하기. 로그인 페이지로 이동시키기.")
 			}
 	)
 	@PostMapping("/refresh")
-	public ResponseEntity<Map<String, Object>> refreshToken(@RequestBody User user, HttpServletRequest request) {
+	public ResponseEntity<Map<String, Object>> refreshToken(HttpServletRequest request) {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		String token = request.getHeader("refreshToken");
@@ -163,7 +163,7 @@ public class UserController {
 		if (jwtUtil.checkToken(token)) {
 			System.out.println("refreshToken은 만료되지 않았으므로 accessToken 재발급 시도");
 
-			if (token.equals(userService.getRefreshToken(user.getId()))) {
+			if (token.equals(userService.getRefreshToken(jwtUtil.getUserId(token)))) {
 				String accessToken = jwtUtil.createAccessToken(user.getId());
 				System.out.println("accesstoken 재발급 성공");
 				resultMap.put("access-token", accessToken);
