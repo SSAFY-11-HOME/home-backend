@@ -111,23 +111,48 @@ public class BoardQnAController {
 		return new ResponseEntity<HashMap<String, Board>>(map, HttpStatus.OK);
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	@Operation(summary = "QnA 게시판 글 삭제", description = "자기 글만 삭제 가능. id, articleId 받음")
+	@Operation(summary = "QnA 게시판 글 삭제", description = "자기 글만 삭제 가능. Header(accessToken), Body(id, articleId) 받음")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "QnA 글 삭제 성공"),
-			@ApiResponse(responseCode = "400", description = "QnA 글 삭제 실패")
+			@ApiResponse(responseCode = "400", description = "accessToken에서 추출한 id와 글의 id가 다름. 자신의 글만 삭제 가능."),
+			@ApiResponse(responseCode = "401", description = "accessToken 만료됨. /user/refresh로 refreshToken 전달해서 accessToken 갱신 후 재요청."),
+			@ApiResponse(responseCode = "404", description = "전달 받은 accessToken 없음. 로그인 필요. 로그인 페이지로 이동시키기.")
 			})
 	@DeleteMapping
-	public ResponseEntity<String> delete(@RequestBody Board board) {
-		String id = board.getId();
-		int articleId = board.getArticleId();
+	public ResponseEntity<Map<String, Object>> delete(@RequestBody Board board, HttpServletRequest request) {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
 		
-		Board temp = boardQnAService.selectOne(articleId);
-		if(temp.getId().equals(id)==false) {
-			return new ResponseEntity<String>("자신의 글만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
+		// 액세스 토큰 자체가 없는 경우 == 로그인x 상태
+		String accessToken = request.getHeader("Authorization");
+		if(accessToken == null) {
+			System.out.println("토큰 없음. 로그인x 상태.");
+			resultMap.put("message", "전달받은 accessToken 없음! 로그인 하세요.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
 		
-		int result = boardQnAService.delete(articleId);
-		return new ResponseEntity<String>("글 삭제 성공", HttpStatus.OK);
+		// 액세스 토큰은 넘어 온 상태. 해당 토큰 유효한 지 검사.
+		if (!jwtUtil.checkToken(accessToken)) {
+			System.out.println("accessToken 만료됨.");
+			resultMap.put("message", "accessToken 만료됨. /user/refresh 로 토큰 갱신 후 재요청.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		// 유효한 액세스 토큰. 토큰에서 id 추출해서 현재 유저가 작성한 글인지 판단
+		String idInToken = jwtUtil.getUserId(accessToken);	
+		if (board.getId().equals(idInToken) || board.getId().equals("admin")) { // 현재 유저가 작성한 글이거나 admin 이면 삭제 가능
+			int result = boardQnAService.delete(board.getArticleId());
+			resultMap.put("message", "QnA 삭제 성공.");
+			status = HttpStatus.OK;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+			
+		} else {
+			resultMap.put("message", "삭제 권한이 없습니다. 현재 로그인 한 사용자가 작성한 글이 아닙니다.");
+			status = HttpStatus.BAD_REQUEST;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	@Operation(summary = "QnA 게시판 글 수정", description = "자기 글만 수정 가능. articleId, id, title, contents 받음")
