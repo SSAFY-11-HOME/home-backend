@@ -164,7 +164,7 @@ public class UserController {
 			System.out.println("refreshToken은 만료되지 않았으므로 accessToken 재발급 시도");
 
 			if (token.equals(userService.getRefreshToken(jwtUtil.getUserId(token)))) {
-				String accessToken = jwtUtil.createAccessToken(user.getId());
+				String accessToken = jwtUtil.createAccessToken(jwtUtil.getUserId(token));
 				System.out.println("accesstoken 재발급 성공");
 				resultMap.put("access-token", accessToken);
 				status = HttpStatus.CREATED;
