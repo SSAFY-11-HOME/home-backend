@@ -1,5 +1,7 @@
 package com.ssafy.homebackend.mapper;
 
+import java.util.ArrayList;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.homebackend.vo.Board;
@@ -13,4 +15,10 @@ public interface BoardQnAMapper {
 	int delete(int articleId);
 
 	int update(Board board);
+
+	ArrayList<Board> getPrevNext(int articleId);
+
+	int getPrevId(int articleId);
+
+	int getNextId(int articleId);
 }

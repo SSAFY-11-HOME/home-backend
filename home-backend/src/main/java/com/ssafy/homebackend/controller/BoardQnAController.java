@@ -1,5 +1,8 @@
 package com.ssafy.homebackend.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.homebackend.service.BoardQnAService;
 import com.ssafy.homebackend.vo.Board;
+import com.ssafy.homebackend.vo.SearchIdName;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -47,16 +51,27 @@ public class BoardQnAController {
 		return new ResponseEntity<String>("QnA 작성 성공", HttpStatus.CREATED);
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	@Operation(summary = "QnA 게시판 글 읽기", description = "권한 상관 없이 글 읽기 가능. 글 번호 받음.")
+	@Operation(summary = "QnA 게시판 글 읽기", description = "권한 상관 없이 글 읽기 가능. 글 번호 파라미터로 받음. map으로 현재글(current), 이전(prev), 이후(next) 글에 대한 정보 반환")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "QnA 글 읽기 성공")
 			})
 	@GetMapping("/{articleId}")
-	public ResponseEntity<Board> selectOne(@Parameter(description = "글 번호") @PathVariable int articleId) {
+	public ResponseEntity<HashMap<String, Board>> selectOne(@Parameter(description = "글 번호") @PathVariable int articleId) {
+		HashMap<String, Board> map = new HashMap<>();
 		
 //		log.info("게시판 글 읽기!");
-		Board board = boardQnAService.selectOne(articleId);
-		return new ResponseEntity<Board>(board, HttpStatus.OK);
+		Board current = boardQnAService.selectOne(articleId);
+		map.put("current", current);
+				
+		// 이전 글 (없으면 null)
+		Board prev = boardQnAService.getPrev(articleId);
+		map.put("prev", prev); 
+		
+		// 이후 글 (없으면 null)
+		Board next = boardQnAService.getNext(articleId);
+		map.put("next", next);
+		
+		return new ResponseEntity<HashMap<String, Board>>(map, HttpStatus.OK);
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	@Operation(summary = "QnA 게시판 글 삭제", description = "자기 글만 삭제 가능. id, articleId 받음")

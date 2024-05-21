@@ -15,6 +15,34 @@
 		where articleId = #{articleId}
 	</select>
 	
+	<!-- 이전 글의 id -->
+	<select id="getPrevId" parameterType="Integer" resultType="Integer">
+		select 
+		prevId
+		from
+			(
+			select 
+			articleId,
+			lag(articleId, 1, -1) over(order by articleId) as prevId
+			FROM qboard
+			) as prev
+		where articleid = #{articleId};
+	</select>
+	
+	<!-- 이후 글의 id -->
+	<select id="getNextId" parameterType="Integer" resultType="Integer">
+		select 
+		nextId
+		from
+			(
+			select 
+			articleId,
+			lead(articleId, 1, -1) over(order by articleId) as nextId
+			FROM qboard
+			) as next
+		where articleid = #{articleId};
+	</select>
+	
 	<delete id="delete" parameterType="Integer">
 		delete from qboard 
 		where articleId = #{articleId}

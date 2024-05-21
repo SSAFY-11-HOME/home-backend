@@ -1,5 +1,7 @@
 package com.ssafy.homebackend.service;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +31,17 @@ public class BoardQnAServiceImpl implements BoardQnAService {
 	@Override
 	public int update(Board board) {
 		return mapper.update(board);
+	}
+
+	@Override
+	public Board getPrev(int articleId) {
+		int prevId = mapper.getPrevId(articleId);
+		return mapper.selectOne(prevId);
+	}
+
+	@Override
+	public Board getNext(int articleId) {
+		int nextId = mapper.getNextId(articleId);
+		return mapper.selectOne(nextId);
 	}
 }
