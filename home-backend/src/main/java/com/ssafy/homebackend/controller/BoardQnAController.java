@@ -2,6 +2,7 @@ package com.ssafy.homebackend.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,37 +40,48 @@ public class BoardQnAController {
 	@Autowired
 	JWTUtil jwtUtil;
 	
-	@Operation(summary = "QnA 게시판 글 쓰기", description = "로그인 상태에서만 글 쓰기 가능. id, title, contents 받음.")
+	@Operation(summary = "QnA 게시판 글 쓰기", description = "로그인 상태에서만 글 쓰기 가능. title, contents 받음.")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "201", description = "QnA 글쓰기 성공"), 
-			@ApiResponse(responseCode = "400", description = "QnA 글쓰기 실패")
+			@ApiResponse(responseCode = "400", description = "제목 또는 내용의 길이가 0임."),
+			@ApiResponse(responseCode = "401", description = "accessToken 만료됨. /user/refresh로 refreshToken 전달해서 accessToken 갱신 후 재요청."),
+			@ApiResponse(responseCode = "404", description = "전달 받은 accessToken 없음. 로그인 필요. 로그인 페이지로 이동시키기.")
 			})
 	@PostMapping
-	public ResponseEntity<String> insert(@RequestBody Board board, HttpServletRequest request) {
-		String accessToken = request.getHeader("Authorization");
-		if (jwtUtil.checkToken(accessToken)) {
-			System.out.println("사용 가능한 토큰!");
-//			try {
-////				로그인 사용자 정보.
-//				MemberDto memberDto = memberService.userInfo(userId);
-//				resultMap.put("userInfo", memberDto);
-//				status = HttpStatus.OK;
-//			} catch (Exception e) {
-//				log.error("정보조회 실패 : {}", e);
-//				resultMap.put("message", e.getMessage());
-//				status = HttpStatus.INTERNAL_SERVER_ERROR;
-//			}
-		} else {
-			System.out.println("사용 불가능한 토큰!");
-//			status = HttpStatus.UNAUTHORIZED;
-		}
+	public ResponseEntity<Map<String, Object>> insert(@RequestBody Board board, HttpServletRequest request) {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
 		
-		if (board.getId().equals("") || board.getTitle().equals("") || board.getContents().equals("")) {
-			return new ResponseEntity<String>("모든 필드를 입력해 주세요.", HttpStatus.BAD_REQUEST);
+		// 액세스 토큰 자체가 없는 경우 == 로그인x 상태
+		String accessToken = request.getHeader("Authorization");
+		if(accessToken == null) {
+			System.out.println("토큰 없음. 로그인x 상태.");
+			resultMap.put("message", "전달받은 accessToken 없음! 로그인 하세요.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
-		int resultCode = boardQnAService.insert(board);
-		System.out.println("result Code = " + resultCode);
-		return new ResponseEntity<String>("QnA 작성 성공", HttpStatus.CREATED);
+			
+		// 액세스 토큰은 넘어 온 상태. 해당 토큰 유효한 지 검사.
+		if (!jwtUtil.checkToken(accessToken)) {
+			System.out.println("accessToken 만료됨.");
+			resultMap.put("message", "accessToken 만료됨. /user/refresh 로 토큰 갱신 후 재요청.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+			
+		// 유효한 액세스 토큰. 토큰에서 id 추출해서 작성한 글 객체에 추가.
+		board.setId(jwtUtil.getUserId(accessToken));	
+		if (board.getTitle().trim().length()>0 && board.getContents().trim().length()>0) {
+			int resultCode = boardQnAService.insert(board);
+			resultMap.put("message", "QnA 작성 성공.");
+			status = HttpStatus.CREATED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+			
+		} else {
+			resultMap.put("message", "제목과 내용 모두 입력해 주세요.");
+			status = HttpStatus.BAD_REQUEST;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	@Operation(summary = "QnA 게시판 글 읽기", description = "권한 상관 없이 글 읽기 가능. 글 번호 파라미터로 받음. map으로 현재글(current), 이전(prev), 이후(next) 글에 대한 정보 반환")
