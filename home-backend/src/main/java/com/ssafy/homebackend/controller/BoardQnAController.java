@@ -58,8 +58,12 @@ public class BoardQnAController {
 	@GetMapping("/{articleId}")
 	public ResponseEntity<HashMap<String, Board>> selectOne(@Parameter(description = "글 번호") @PathVariable int articleId) {
 		HashMap<String, Board> map = new HashMap<>();
+
+		// 조회수 증가
+		int result = boardQnAService.addCount(articleId);
+		System.out.println("조회수 증가 결과 : "+result);
 		
-//		log.info("게시판 글 읽기!");
+		// 현재 글
 		Board current = boardQnAService.selectOne(articleId);
 		map.put("current", current);
 				

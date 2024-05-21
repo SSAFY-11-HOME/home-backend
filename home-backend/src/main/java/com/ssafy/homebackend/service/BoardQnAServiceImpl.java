@@ -49,4 +49,9 @@ public class BoardQnAServiceImpl implements BoardQnAService {
 	public ArrayList<Board> selectAll() {
 		return mapper.selectAll();
 	}
+
+	@Override
+	public int addCount(int articleId) {
+		return mapper.addCount(articleId);
+	}
 }

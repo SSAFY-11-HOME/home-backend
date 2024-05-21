@@ -18,4 +18,6 @@ public interface BoardQnAService {
 	public Board getNext(int articleId);
 
 	public ArrayList<Board> selectAll();
+
+	public int addCount(int articleId);
 }

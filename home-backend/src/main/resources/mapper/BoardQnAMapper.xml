@@ -21,6 +21,13 @@
 		where articleId = #{articleId}
 	</select>
 	
+	<!-- 조회수 증가 -->
+	<update id="addCount" parameterType="Integer">
+		update qboard set
+		count = count+1
+		where articleId = #{articleId}
+	</update>
+	
 	<!-- 이전 글의 id -->
 	<select id="getPrevId" parameterType="Integer" resultType="Integer">
 		select 
