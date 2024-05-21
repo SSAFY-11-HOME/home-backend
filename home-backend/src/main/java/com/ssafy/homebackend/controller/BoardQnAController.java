@@ -17,14 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.homebackend.service.BoardQnAService;
+import com.ssafy.homebackend.util.JWTUtil;
 import com.ssafy.homebackend.vo.Board;
-import com.ssafy.homebackend.vo.SearchIdName;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -35,6 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 public class BoardQnAController {
 	@Autowired
 	BoardQnAService boardQnAService;
+	@Autowired
+	JWTUtil jwtUtil;
 	
 	@Operation(summary = "QnA 게시판 글 쓰기", description = "로그인 상태에서만 글 쓰기 가능. id, title, contents 받음.")
 	@ApiResponses(value = { 
@@ -42,7 +45,25 @@ public class BoardQnAController {
 			@ApiResponse(responseCode = "400", description = "QnA 글쓰기 실패")
 			})
 	@PostMapping
-	public ResponseEntity<String> insert(@RequestBody Board board) {
+	public ResponseEntity<String> insert(@RequestBody Board board, HttpServletRequest request) {
+		String accessToken = request.getHeader("Authorization");
+		if (jwtUtil.checkToken(accessToken)) {
+			System.out.println("사용 가능한 토큰!");
+//			try {
+////				로그인 사용자 정보.
+//				MemberDto memberDto = memberService.userInfo(userId);
+//				resultMap.put("userInfo", memberDto);
+//				status = HttpStatus.OK;
+//			} catch (Exception e) {
+//				log.error("정보조회 실패 : {}", e);
+//				resultMap.put("message", e.getMessage());
+//				status = HttpStatus.INTERNAL_SERVER_ERROR;
+//			}
+		} else {
+			System.out.println("사용 불가능한 토큰!");
+//			status = HttpStatus.UNAUTHORIZED;
+		}
+		
 		if (board.getId().equals("") || board.getTitle().equals("") || board.getContents().equals("")) {
 			return new ResponseEntity<String>("모든 필드를 입력해 주세요.", HttpStatus.BAD_REQUEST);
 		}

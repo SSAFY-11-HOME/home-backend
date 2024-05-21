@@ -22,4 +22,6 @@ public interface UserMapper {
 	void saveRefreshToken(Map<String, String> map);
 
 	int deleteRefreshToken(Map<String, String> map);
+
+	String getRefreshToken(String id);
 }

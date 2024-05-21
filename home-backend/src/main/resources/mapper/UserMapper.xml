@@ -53,6 +53,12 @@
 		token = #{token, jdbcType=VARCHAR}
 		where id = #{id}
 	</update>
+	
+	<select id="getRefreshToken" parameterType="String" resultType = "String">
+		select token
+		from user
+		where id = #{id}
+	</select>
 </mapper>
 
 

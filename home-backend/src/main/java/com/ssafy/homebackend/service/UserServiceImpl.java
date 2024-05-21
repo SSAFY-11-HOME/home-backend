@@ -55,4 +55,10 @@ public class UserServiceImpl implements UserService{
 		map.put("token", null);
 		return mapper.deleteRefreshToken(map);
 	}
+
+	@Override
+	public String getRefreshToken(String id) {
+		return mapper.getRefreshToken(id);
+	}
+
 }

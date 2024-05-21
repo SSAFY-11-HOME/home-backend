@@ -18,4 +18,6 @@ public interface UserService {
 	public void saveRefreshToken(String id, String refreshToken);
 
 	public int deleteRefreshToken(String userId);
+
+	public String getRefreshToken(String id);
 }
