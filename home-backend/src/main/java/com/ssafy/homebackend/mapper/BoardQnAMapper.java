@@ -21,4 +21,6 @@ public interface BoardQnAMapper {
 	int getPrevId(int articleId);
 
 	int getNextId(int articleId);
+
+	ArrayList<Board> selectAll();
 }

@@ -16,4 +16,6 @@ public interface BoardQnAService {
 	public Board getPrev(int articleId);
 	
 	public Board getNext(int articleId);
+
+	public ArrayList<Board> selectAll();
 }

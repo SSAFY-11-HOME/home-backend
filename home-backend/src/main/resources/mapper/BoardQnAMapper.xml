@@ -9,6 +9,12 @@
 		values (#{id}, #{title}, #{contents})	
 	</insert>
 	
+	<select id="selectAll" resultType="com.ssafy.homebackend.vo.Board">
+		select *
+		from qboard 
+		order by articleId desc;
+	</select>
+	
 	<select id="selectOne" parameterType="Integer" resultType="com.ssafy.homebackend.vo.Board">
 		select *
 		from qboard 

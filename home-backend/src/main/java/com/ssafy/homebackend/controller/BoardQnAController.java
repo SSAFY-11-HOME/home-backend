@@ -116,6 +116,17 @@ public class BoardQnAController {
 		int result = boardQnAService.update(board);
 		return new ResponseEntity<String>("글 수정 성공", HttpStatus.OK);
 	}
-	
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	@Operation(summary = "QnA 게시판 글 전체 불러오기", description = "권한 상관 없이 글 읽기 가능.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "QnA 글 불러오기 성공")
+			})
+	@GetMapping("/list")
+	public ResponseEntity<ArrayList<Board>> selectAll() {
+		
+//		log.info("게시판 글 불러오기!");
+		ArrayList<Board> list = boardQnAService.selectAll();
+		
+		return new ResponseEntity<ArrayList<Board>>(list, HttpStatus.OK);
+	}
 }

@@ -44,4 +44,9 @@ public class BoardQnAServiceImpl implements BoardQnAService {
 		int nextId = mapper.getNextId(articleId);
 		return mapper.selectOne(nextId);
 	}
+
+	@Override
+	public ArrayList<Board> selectAll() {
+		return mapper.selectAll();
+	}
 }
