@@ -37,11 +37,15 @@ public class HouseController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "정상"), })
 	@GetMapping("/area")
 	public ResponseEntity<ArrayList<AreaDeal>> selectAreaAptDeal(
-			@Parameter(required = true, description = "위도") @RequestParam(required = true, defaultValue = "37.6618278843148") String lat,
-			@Parameter(required = true, description = "경도") @RequestParam(required = true, defaultValue = "127.04992029066") String lng) {
+			@Parameter(required = true, description = "위도1") @RequestParam(required = true, defaultValue = "33.44843745687413") String lat1,
+			@Parameter(required = true, description = "위도2") @RequestParam(required = true, defaultValue = "33.452964008206735") String lat2,
+			@Parameter(required = true, description = "경도1") @RequestParam(required = true, defaultValue = "126.56798357402302") String lng1,
+			@Parameter(required = true, description = "경도2") @RequestParam(required = true, defaultValue = "126.57333898904454") String lng2) {
 		Map<String, String> param = new HashMap<>();
-		param.put("lat", lat);
-		param.put("lng", lng);
+		param.put("lat1", lat1);
+		param.put("lng1", lng1);
+		param.put("lat2", lat2);
+		param.put("lng2", lng2);
 		ArrayList<AreaDeal> list = areaDealService.selectAreaDeal(param);
 		return ResponseEntity.ok(list);
 	}

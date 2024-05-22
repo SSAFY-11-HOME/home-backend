@@ -32,8 +32,9 @@ FROM (
     JOIN 
         housedeal hd ON hi.aptCode = hd.aptCode
     WHERE 
-        hi.lng BETWEEN (#{lng} - 0.01) AND (#{lng} + 0.01) 
-        AND hi.lat BETWEEN (#{lat} - 0.001) AND (#{lat} + 0.001)
+        hi.lng BETWEEN #{lng1} AND #{lng2}
+        AND 
+        hi.lat BETWEEN #{lat1} AND #{lat2}
 	) AS sub_query
 WHERE 
     sub_query.row_num = 1;
