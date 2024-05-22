@@ -2,6 +2,7 @@ package com.ssafy.homebackend.service;
 import java.util.ArrayList;
 
 import com.ssafy.homebackend.vo.Board;
+import com.ssafy.homebackend.vo.Comment;
 
 public interface BoardQnAService {
 
@@ -20,4 +21,10 @@ public interface BoardQnAService {
 	public ArrayList<Board> selectAll();
 
 	public int addCount(int articleId);
+
+	public ArrayList<Comment> getComments(int articleId);
+
+	public int writeComment(Comment comment);
+
+	public int deleteComment(Comment comment);
 }

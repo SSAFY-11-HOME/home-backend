@@ -28,6 +28,12 @@
 		where articleId = #{articleId}
 	</update>
 	
+	<select id="getComments" parameterType="Integer" resultType="com.ssafy.homebackend.vo.Comment">
+		select commentId, qboard_articleId as articleId, user_id as id, contents, date 
+		from comments 
+		where qboard_articleId = #{articleId} order by date asc;
+	</select>
+	
 	<!-- 이전 글의 id -->
 	<select id="getPrevId" parameterType="Integer" resultType="Integer">
 		select 
@@ -67,6 +73,17 @@
 		contents = #{contents}
 		where articleId = #{articleId}
 	</update>
+	
+	<insert id="writeComment" parameterType="com.ssafy.homebackend.vo.Comment">
+		insert into comments (qboard_articleId, user_id, contents) 
+		values (#{articleId}, #{id}, #{contents})
+	</insert>
+	
+	<delete id="deleteComment" parameterType="com.ssafy.homebackend.vo.Comment">
+		delete from comments
+		where qboard_articleId = #{articleId} 
+		and commentId = #{commentId} 
+	</delete>
 </mapper>
 
 

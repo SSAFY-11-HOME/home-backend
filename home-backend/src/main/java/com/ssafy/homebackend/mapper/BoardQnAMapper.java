@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.homebackend.vo.Board;
+import com.ssafy.homebackend.vo.Comment;
 
 @Mapper
 public interface BoardQnAMapper {
@@ -25,4 +26,10 @@ public interface BoardQnAMapper {
 	ArrayList<Board> selectAll();
 
 	int addCount(int articleId);
+
+	ArrayList<Comment> getComments(int articleId);
+
+	int writeComment(Comment comment);
+
+	int deleteComment(Comment comment);
 }

@@ -41,12 +41,25 @@ public class HouseController {
 			@Parameter(required = true, description = "위도2") @RequestParam(required = true, defaultValue = "33.452964008206735") String lat2,
 			@Parameter(required = true, description = "경도1") @RequestParam(required = true, defaultValue = "126.56798357402302") String lng1,
 			@Parameter(required = true, description = "경도2") @RequestParam(required = true, defaultValue = "126.57333898904454") String lng2) {
+		
+//		System.out.println("측정 시작");
+//		long beforeTime = System.currentTimeMillis();
+		
 		Map<String, String> param = new HashMap<>();
 		param.put("lat1", lat1);
 		param.put("lng1", lng1);
 		param.put("lat2", lat2);
 		param.put("lng2", lng2);
 		ArrayList<AreaDeal> list = areaDealService.selectAreaDeal(param);
+		
+//		long afterTime = System.currentTimeMillis(); // 코드 실행 후에 시간 받아오기
+//		System.out.println("측정 종료");
+		
+//		long secDiffTime = (afterTime - beforeTime); //두 시간에 차 계산
+		
+//		System.out.println("실행 시간(us) : "+secDiffTime);
+//		System.out.println("list 크기 : "+list.size());
+		
 		return ResponseEntity.ok(list);
 	}
 

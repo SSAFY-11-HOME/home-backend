@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.homebackend.mapper.BoardQnAMapper;
 import com.ssafy.homebackend.vo.Board;
+import com.ssafy.homebackend.vo.Comment;
 
 @Service
 public class BoardQnAServiceImpl implements BoardQnAService {
@@ -53,5 +54,20 @@ public class BoardQnAServiceImpl implements BoardQnAService {
 	@Override
 	public int addCount(int articleId) {
 		return mapper.addCount(articleId);
+	}
+
+	@Override
+	public ArrayList<Comment> getComments(int articleId) {
+		return mapper.getComments(articleId);
+	}
+
+	@Override
+	public int writeComment(Comment comment) {
+		return mapper.writeComment(comment);
+	}
+
+	@Override
+	public int deleteComment(Comment comment) {
+		return mapper.deleteComment(comment);
 	}
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.homebackend.service.BoardQnAService;
 import com.ssafy.homebackend.util.JWTUtil;
 import com.ssafy.homebackend.vo.Board;
+import com.ssafy.homebackend.vo.Comment;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -89,8 +90,8 @@ public class BoardQnAController {
 			@ApiResponse(responseCode = "200", description = "QnA 글 읽기 성공")
 			})
 	@GetMapping("/{articleId}")
-	public ResponseEntity<HashMap<String, Board>> selectOne(@Parameter(description = "글 번호") @PathVariable int articleId) {
-		HashMap<String, Board> map = new HashMap<>();
+	public ResponseEntity<HashMap<String, Object>> selectOne(@Parameter(description = "글 번호") @PathVariable int articleId) {
+		HashMap<String, Object> map = new HashMap<>();
 
 		// 조회수 증가
 		int result = boardQnAService.addCount(articleId);
@@ -99,6 +100,10 @@ public class BoardQnAController {
 		// 현재 글
 		Board current = boardQnAService.selectOne(articleId);
 		map.put("current", current);
+		
+		// 현재 글의 모든 댓글
+		ArrayList<Comment> comments = boardQnAService.getComments(articleId); 
+		map.put("comments", comments);
 				
 		// 이전 글 (없으면 null)
 		Board prev = boardQnAService.getPrev(articleId);
@@ -108,7 +113,7 @@ public class BoardQnAController {
 		Board next = boardQnAService.getNext(articleId);
 		map.put("next", next);
 		
-		return new ResponseEntity<HashMap<String, Board>>(map, HttpStatus.OK);
+		return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	@Operation(summary = "QnA 게시판 글 삭제", description = "자기 글만 삭제 가능. header(Authorization:access_token 값), body(id, articleId) 받음")
@@ -216,5 +221,92 @@ public class BoardQnAController {
 		ArrayList<Board> list = boardQnAService.selectAll();
 		
 		return new ResponseEntity<ArrayList<Board>>(list, HttpStatus.OK);
+	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	@Operation(summary = "현재 글에 댓글 쓰기", description = "로그인 상태에서만 댓글 쓰기 가능. header(Authorization:access_token 값), body(articleId, userId, contents) 받음.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "201", description = "댓글쓰기 성공"), 
+			@ApiResponse(responseCode = "400", description = "내용의 길이가 0임."),
+			@ApiResponse(responseCode = "401", description = "accessToken 만료됨. /user/refresh로 refreshToken 전달해서 accessToken 갱신 후 재요청."),
+			@ApiResponse(responseCode = "404", description = "전달 받은 accessToken 없음. 로그인 필요 메시지 띄우기.")
+			})
+	@PostMapping("/comment")
+	public ResponseEntity<Map<String, Object>> writeComment(@RequestBody Comment comment, HttpServletRequest request) {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		// 액세스 토큰 자체가 없는 경우 == 로그인x 상태
+		String accessToken = request.getHeader("Authorization");
+		if(accessToken == null) {
+			System.out.println("토큰 없음. 로그인x 상태.");
+			resultMap.put("message", "전달받은 accessToken 없음! 로그인 하세요.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+			
+		// 액세스 토큰은 넘어 온 상태. 해당 토큰 유효한 지 검사.
+		if (!jwtUtil.checkToken(accessToken)) {
+			System.out.println("accessToken 만료됨.");
+			resultMap.put("message", "accessToken 만료됨. /user/refresh 로 토큰 갱신 후 재요청.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+			
+		// 유효한 액세스 토큰. 토큰에서 id 추출해서 작성한 글 객체에 추가.
+		if (comment.getContents().trim().length()>0) {
+			int resultCode = boardQnAService.writeComment(comment);
+			resultMap.put("message", "댓글 작성 성공.");
+			status = HttpStatus.CREATED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+			
+		} else {
+			resultMap.put("message", "내용을 입력해 주세요.");
+			status = HttpStatus.BAD_REQUEST;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	@Operation(summary = "내 댓글 삭제", description = "자기 댓글만 삭제 가능. header(Authorization:access_token 값), body(commentId, articleId, id) 받음")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "댓글 삭제 성공"),
+			@ApiResponse(responseCode = "403", description = "accessToken에서 추출한 id와 글의 id가 다름. 자신의 글만 삭제 가능."),
+			@ApiResponse(responseCode = "401", description = "accessToken 만료됨. /user/refresh로 refreshToken 전달해서 accessToken 갱신 후 재요청."),
+			@ApiResponse(responseCode = "404", description = "전달 받은 accessToken 없음. 로그인 필요. 로그인 페이지로 이동시키기.")
+			})
+	@DeleteMapping("/comment")
+	public ResponseEntity<Map<String, Object>> deleteComment(@RequestBody Comment comment, HttpServletRequest request) {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		// 액세스 토큰 자체가 없는 경우 == 로그인x 상태
+		String accessToken = request.getHeader("Authorization");
+		if(accessToken == null) {
+			System.out.println("토큰 없음. 로그인x 상태.");
+			resultMap.put("message", "전달받은 accessToken 없음! 로그인 하세요.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		// 액세스 토큰은 넘어 온 상태. 해당 토큰 유효한 지 검사.
+		if (!jwtUtil.checkToken(accessToken)) {
+			System.out.println("accessToken 만료됨.");
+			resultMap.put("message", "accessToken 만료됨. /user/refresh 로 토큰 갱신 후 재요청.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		// 유효한 액세스 토큰. 토큰에서 id 추출해서 현재 유저가 작성한 글인지 판단
+		String idInToken = jwtUtil.getUserId(accessToken);	
+		if (comment.getId().equals(idInToken) || comment.getId().equals("admin")) { // 현재 유저가 작성한 글이거나 admin 이면 삭제 가능
+			int result = boardQnAService.deleteComment(comment);
+			resultMap.put("message", "댓글 삭제 성공.");
+			status = HttpStatus.OK;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+			
+		} else {
+			resultMap.put("message", "삭제 권한이 없습니다. 현재 로그인 한 사용자가 작성한 글이 아닙니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
 	}
 }
