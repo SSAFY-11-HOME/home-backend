@@ -27,4 +27,6 @@ public interface BoardQnAService {
 	public int writeComment(Comment comment);
 
 	public int deleteComment(Comment comment);
+
+	public int updateComment(Comment comment);
 }

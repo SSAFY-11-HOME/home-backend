@@ -32,4 +32,6 @@ public interface BoardQnAMapper {
 	int writeComment(Comment comment);
 
 	int deleteComment(Comment comment);
+
+	int updateComment(Comment comment);
 }

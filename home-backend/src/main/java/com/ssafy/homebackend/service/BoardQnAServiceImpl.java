@@ -70,4 +70,9 @@ public class BoardQnAServiceImpl implements BoardQnAService {
 	public int deleteComment(Comment comment) {
 		return mapper.deleteComment(comment);
 	}
+
+	@Override
+	public int updateComment(Comment comment) {
+		return mapper.updateComment(comment);
+	}
 }

@@ -84,6 +84,13 @@
 		where qboard_articleId = #{articleId} 
 		and commentId = #{commentId} 
 	</delete>
+	
+	<update id="updateComment" parameterType="com.ssafy.homebackend.vo.Comment">
+		update comments set
+		contents = #{contents}
+		where qboard_articleId = #{articleId} 
+		and commentId = #{commentId}
+	</update>
 </mapper>
 
 

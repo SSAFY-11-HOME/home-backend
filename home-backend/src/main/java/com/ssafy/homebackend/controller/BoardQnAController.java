@@ -309,4 +309,54 @@ public class BoardQnAController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
 	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	@Operation(summary = "내 댓글 내용 수정", description = "자기 댓글만 수정 가능(admin도 유저 댓글 수정 불가). header(Authorization:access_token 값), body(commentId, articleId, id, contents) 받음")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
+			@ApiResponse(responseCode = "400", description = "수정한 내용의 길이가 0임."),
+			@ApiResponse(responseCode = "401", description = "accessToken 만료됨. /user/refresh로 refreshToken 전달해서 accessToken 갱신 후 재요청."),
+			@ApiResponse(responseCode = "403", description = "accessToken에서 추출한 id와 body로 전달받은 글 작성자 id가 다름. 자신의 글만 수정 가능."),
+			@ApiResponse(responseCode = "404", description = "전달 받은 accessToken 없음. 로그인 필요. 로그인 페이지로 이동시키기.")
+			})
+	@PutMapping("/comment")
+	public ResponseEntity<Map<String, Object>> updateComment(@RequestBody Comment comment, HttpServletRequest request) {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		// 액세스 토큰 자체가 없는 경우 == 로그인x 상태
+		String accessToken = request.getHeader("Authorization");
+		if(accessToken == null) {
+			System.out.println("토큰 없음. 로그인x 상태.");
+			resultMap.put("message", "전달받은 accessToken 없음! 로그인 하세요.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		// 액세스 토큰은 넘어 온 상태. 해당 토큰 유효한 지 검사.
+		if (!jwtUtil.checkToken(accessToken)) {
+			System.out.println("accessToken 만료됨.");
+			resultMap.put("message", "accessToken 만료됨. /user/refresh 로 토큰 갱신 후 재요청.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		// 유효한 액세스 토큰. 토큰에서 id 추출해서 현재 유저가 작성한 글인지 판단
+		String idInToken = jwtUtil.getUserId(accessToken);	
+		if (comment.getId().equals(idInToken)) { // 현재 유저가 작성한 글일 때,
+			if (comment.getContents().trim().length()>0) { 
+				int result = boardQnAService.updateComment(comment);
+				resultMap.put("message", "댓글 수정 성공.");
+				status = HttpStatus.OK;
+				return new ResponseEntity<Map<String, Object>>(resultMap, status);		
+			} else { // 제목 또는 내용의 길이가 0인 경우
+				resultMap.put("message", "내용의 길이가 0임.");
+				status = HttpStatus.BAD_REQUEST;
+				return new ResponseEntity<Map<String, Object>>(resultMap, status);
+			}
+		} else {
+			resultMap.put("message", "수정 권한이 없습니다. 현재 로그인 한 사용자가 작성한 글이 아닙니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+	}
 }
