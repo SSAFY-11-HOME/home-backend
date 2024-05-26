@@ -17,7 +17,7 @@
 ## 멤버
 |Role|Front-End|Back-End|
 |:-:|:-:|:-:|
-|Member|[김상현](github.com/isyaksh)|[이강산](github.com/clintkslee)|
+|Member|[김상현](https://github.com/isayaksh)|[이강산](https://github.com/clintkslee)|
 
 ## 🛠️ 기술 스택
 
