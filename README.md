@@ -8,12 +8,6 @@
 ## 🗃️ 프로젝트 소개
 **집공략**은 공공데이터 포털의 [국토교통부_아파트매매 실거래 상세 자료](https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057511)와 [Kakao Map API](https://apis.map.kakao.com/web/sample/)를 활용한 주택 매물 검색 서비스입니다.
 
-## 📽️ 시연 영상
-
-🔗 [🏠집공략! - 주택 매물 검색 서비스🏠 시연 영상](https://youtu.be/hOWh54xfU3M)
-
-![image](https://github.com/ZipGongLyag/.github/assets/85926257/9b36e2af-d93b-4cbf-b5a7-6256af45eb10)
-
 ## 멤버
 |Role|Front-End|Back-End|
 |:-:|:-:|:-:|
